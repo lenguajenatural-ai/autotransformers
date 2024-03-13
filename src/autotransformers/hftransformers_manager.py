@@ -19,6 +19,7 @@ from functools import partial
 from .dataset_config import DatasetConfig
 from .model_config import ModelConfig
 from typing import Dict
+from trl import DPOTrainer
 
 
 class MultilabelTrainer(Trainer):
@@ -54,6 +55,7 @@ map_trainer_cls = {
     "chatbot": Trainer,
     "multilabel": MultilabelTrainer,
     "seq2seq": Seq2SeqTrainer,
+    "alignment": DPOTrainer
 }
 
 map_model_cls = {
@@ -62,6 +64,7 @@ map_model_cls = {
     "qa": AutoModelForQuestionAnswering,
     "seq2seq": AutoModelForSeq2SeqLM,
     "chatbot": AutoModelForCausalLM,
+    "alignment": AutoModelForCausalLM
 }
 
 
@@ -281,7 +284,27 @@ class HFTransformersManager:
             ),
             "callbacks": self.dataset_config.callbacks,
         }
-        if self.dataset_config.task != "chatbot":
+        if self.dataset_config.taks == "alignment":
+            trainer_params["model"] = model_init()
+            if not self.model_config.peft_config:
+                trainer_params["ref_model"] = model_init()
+            else:
+                trainer_params["ref_model"] = None
+                trainer_params["peft_config"] = self.model_config.peft_config
+            
+            if self.model_config.alignment_config:
+                alignment_config = self.model_config.alignment_config
+            else:
+                alignment_config = {
+                    "beta": 0.5,
+                    "max_target_length": 1024,
+                    "max_prompt_length": 4096 - 1024,
+                    "generate_during_eval": False 
+                }
+            trainer_params.update(
+                alignment_config
+            )
+        elif self.dataset_config.task != "chatbot":
             trainer_params["model_init"] = model_init
         else:
             model = model_init()

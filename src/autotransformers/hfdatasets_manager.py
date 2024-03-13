@@ -21,6 +21,7 @@ tok_func_map = {
     "seq2seq": tokenize_summarization,
     "classification": tokenize_classification,
     "chatbot": tokenize_chatbot,
+    "alignment": None
 }
 
 
@@ -113,12 +114,13 @@ class HFDatasetsManager:
             tag2id = {t: i for i, t in enumerate(sorted(tags))}
             dataset = self._general_label_mapper(tag2id, dataset)
         dataset = self._augment_dataset(dataset)
-        dataset = _tokenize_dataset(
-            tokenizer, tok_func_map, dataset, self.dataset_config, self.model_config
-        )
-        if self.dataset_config.task == "qa":
-            dataset["test"] = test_dataset
-        dataset = self._parse_types_dataset(dataset)
+        if self.model_config.custom_tokenization_func is None and (self.dataset_config.task not in tok_func_map or not tok_func_map[self.dataset_config.task]):
+            dataset = _tokenize_dataset(
+                tokenizer, tok_func_map, dataset, self.dataset_config, self.model_config
+            )
+            if self.dataset_config.task == "qa":
+                dataset["test"] = test_dataset
+            dataset = self._parse_types_dataset(dataset)
         return dataset, tag2id
 
     def _parse_types_dataset(self, dataset):

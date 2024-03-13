@@ -136,12 +136,6 @@ class ModelConfig:
             "help": "Custom tokenization function for processing texts. When the user does not want to use the default tokenization function for the task at hand, one can create a custom tokenization function. This function must receive samples from a dataset, a tokenizer and a dataset config."
         },
     )
-    partial_custom_tok_func_call: Any = field(
-        default=None,
-        metadata={
-            "help": "Partial call for a tokenization function, with all necessary parameters passed to it.."
-        },
-    )
     max_length_summary: int = field(
         default=128,
         metadata={
@@ -294,6 +288,10 @@ class ModelConfig:
         metadata={
             "help": "Alpha parameter for NefTune (Noise Embeddings) technique for instruction tuning."
         },
+    )
+    alignment_config: Dict = field(
+        default=None,
+        metadata={"help": "Configuration for alignment tasks."},
     )
 
 

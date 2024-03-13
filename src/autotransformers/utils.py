@@ -366,33 +366,24 @@ def _tokenize_dataset(tokenizer, tok_func_map, dataset, dataset_config, model_co
     dataset: datasets.DatasetDict
         Tokenized dataset.
     """
-    if not model_config.partial_custom_tok_func_call:
-        dataset = dataset.map(
-            (
-                partial(
-                    model_config.custom_tokenization_func,
-                    tokenizer=tokenizer,
-                    dataset_config=dataset_config,
-                )
-                if model_config.custom_tokenization_func
-                else partial(
-                    tok_func_map[dataset_config.task],
-                    tokenizer=tokenizer,
-                    dataset_config=dataset_config,
-                )
-            ),
-            batched=True,
-            remove_columns=dataset["train"].column_names,
-            num_proc=dataset_config.num_proc,
-        )
-    else:
-        dataset = dataset.map(
-            model_config.partial_custom_tok_func_call,
-            batched=True,
-            remove_columns=dataset["train"].column_names,
-            batch_size=10_000,
-            num_proc=1,
-        )
+    dataset = dataset.map(
+        (
+            partial(
+                model_config.custom_tokenization_func,
+                tokenizer=tokenizer,
+                dataset_config=dataset_config,
+            )
+            if model_config.custom_tokenization_func
+            else partial(
+                tok_func_map[dataset_config.task],
+                tokenizer=tokenizer,
+                dataset_config=dataset_config,
+            )
+        ),
+        batched=True,
+        remove_columns=dataset["train"].column_names,
+        num_proc=dataset_config.num_proc,
+    )
     return dataset
 
 

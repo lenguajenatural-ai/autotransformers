@@ -197,10 +197,7 @@ def test_tokenize_dataset():
     assert isinstance(
         tokenized_dataset["train"][0]["input_ids"][0], int
     ), f"Input ids should be ints"
-    partial_custom_tok_func_call = partial(
-        tokenize_ner, tokenizer=tokenizer, dataset_config=dataconfig
-    )
-    setattr(modelconfig, "partial_custom_tok_func_call", partial_custom_tok_func_call)
+    setattr(modelconfig, "custom_tokenization_func", tokenize_ner)
     tokenized_alternative = _tokenize_dataset(
         tokenizer, tok_func_map, dataset, dataconfig, modelconfig
     )
