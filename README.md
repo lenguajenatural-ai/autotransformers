@@ -1,7 +1,6 @@
 # AUTOTRANSFORMERS: A library for automatic training and comparison of Language Models.
 
-![autotransformers logo](https://drive.google.com/file/d/1KTTkbcX8gWJVbY4zDu1FBem-1cqJnd2k/view?usp=sharing "Logo for LenguajeNatural.AI")
-
+![autotransformers logo](./imgs/LenguajeNaturalAI_fondoblanco.jpg)
 
 `autotransformers` is useful for training multiple transformer-like models for a bunch of datasets in one go, without writing much code or using too much time (the machine does the effort, not you). It is highly integrated with HuggingFace libraries: Transformers, PEFT, TRL, Datasets and Evaluate.
 
@@ -9,7 +8,7 @@ Please check the [online documentation](https://autotransformers.readthedocs.io/
 
 The main functionality of `autotransformers` is depicted in the following figure, where the dashed lines represent fully customizable modules:
 
-![Diagram autotrainer](https://drive.google.com/file/d/1SVoKshDr0moy6eLv_rQRjPOOBrPM-At5/view?usp=sharing "Diagram for AutoTrainer, the main class in autotransformers!")
+![Diagram autotrainer](./imgs/autotransformers_diagram.png "Diagram for AutoTrainer, the main class in autotransformers!")
 
 
 The main class in `autotransformers` is `AutoTrainer`, which is configured with a list of `DatasetConfig`s and a list of `ModelConfig`s. Then, `AutoTrainer` will loop through each dataset configuration, performing hyperparameter tuning for each of the models configurations. For that, it uses `HFDatasetsManager` to load the dataset, depending on the configuration of `DatasetConfig`. It will also tokenize the dataset accordingly. As the dashed lines show, the user can use the default `tokenization_function` for the desired task, or can define their own in `DatasetConfig`. Then, `HFTransformersManager` will load all necessary Transformer objects (model, data collator, training arguments, trainer...). After that, hyperparameter tuning is performed with Optuna. A `CkptCleaner` (checkpoint cleaner) class removes bad performing checkpoints every 10 minutes, also saving the best performing checkpoint in the experiment in a separate directory. After hyperparameter tuning, results on the test split (if available, otherwise the validation split) are obtained via `ResultsGetter`, which is customizable (by passing a custom ResultsGetter class overriding the current methods), and uses a `compute_metrics_function` which is also customizable, by passing a `custom_eval_func` to `DatasetConfig`. These results are stored in json or, if json saving fails, in txt format (results in txt can be also easily loaded with `ast.literal_eval`). `ResultsPlotter` is a helper class that enables the user to easily get a plot of the models' performance on each dataset, and their average performance. 
