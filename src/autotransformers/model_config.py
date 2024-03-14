@@ -294,7 +294,6 @@ class ModelConfig:
         metadata={"help": "Configuration for alignment tasks."},
     )
 
-
     def __str__(
         self,
     ):

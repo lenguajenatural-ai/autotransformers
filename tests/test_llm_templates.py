@@ -10,6 +10,7 @@ from autotransformers.llm_templates import (  # Adjust this import path to where
     SavePeftModelCallback,
 )
 
+
 class TestModule(unittest.TestCase):
     """Contains unit tests for the mymodule module."""
 
@@ -20,9 +21,11 @@ class TestModule(unittest.TestCase):
         sample = {
             "context": "Contextual information",
             "input": "User's question?",
-            "output": "Assistant's response."
+            "output": "Assistant's response.",
         }
-        result = instructions_to_chat(sample, "input", "output", context_field="context")
+        result = instructions_to_chat(
+            sample, "input", "output", context_field="context"
+        )
         self.assertIn("messages", result)
         self.assertEqual(len(result["messages"]), 4)
         self.assertEqual(result["messages"][1]["role"], "context")
@@ -54,7 +57,7 @@ class TestModule(unittest.TestCase):
         """
         model = MagicMock()
         activate_neftune(model, neftune_noise_alpha=5)
-        self.assertTrue(hasattr(model.get_input_embeddings(), 'neftune_noise_alpha'))
+        self.assertTrue(hasattr(model.get_input_embeddings(), "neftune_noise_alpha"))
 
     def test_NEFTuneTrainer(self):
         """
@@ -68,7 +71,9 @@ class TestModule(unittest.TestCase):
         Test `modify_tokenizer` for various tokenizer modifications.
         """
         tokenizer = MagicMock()
-        modify_tokenizer(tokenizer, pad_token_id=0, padding_side="right", new_model_seq_length=512)
+        modify_tokenizer(
+            tokenizer, pad_token_id=0, padding_side="right", new_model_seq_length=512
+        )
         tokenizer.add_special_tokens.assert_not_called()  # Assuming no special tokens were added in this call
 
     @patch("mymodule.PreTrainedModel.save_pretrained")  # Adjust the module path

@@ -1,4 +1,10 @@
-from autotransformers import AutoTrainer, DatasetConfig, ModelConfig, joinpaths, ResultsPlotter
+from autotransformers import (
+    AutoTrainer,
+    DatasetConfig,
+    ModelConfig,
+    joinpaths,
+    ResultsPlotter,
+)
 from transformers import (
     Seq2SeqTrainer,
     AutoModelForSeq2SeqLM,
@@ -17,6 +23,7 @@ from autotransformers.hfdatasets_manager import HFDatasetsManager
 from autotransformers.results_getter import ResultsGetter
 from autotransformers.skip_mix import SkipMix
 import shutil as sh
+
 
 def _create_multilabel_dataset(savename):
     """Create fake multilabel dataset."""
@@ -162,17 +169,21 @@ def test_autotrainer_skip_mix():
         custom_params_config_model={"model_type": "bert"},
         overwrite_training_args={"seed": 69},
     )
-    skip_mix = SkipMix(dataset_name=conll2002_config.alias, model_name=model_config.save_name)
+    skip_mix = SkipMix(
+        dataset_name=conll2002_config.alias, model_name=model_config.save_name
+    )
     autotrainer = AutoTrainer(
         model_configs=[model_config],
         dataset_configs=[conll2002_config],
         metrics_dir="test_notrain",
         use_auth_token=False,
         clean=False,
-        skip_mixes=[skip_mix]
+        skip_mixes=[skip_mix],
     )
     all_results = autotrainer()
-    assert not hasattr(autotrainer, "trainer"), "AutoTrainer should not have a trainer, as the experiment was skipped."
+    assert not hasattr(
+        autotrainer, "trainer"
+    ), "AutoTrainer should not have a trainer, as the experiment was skipped."
     assert isinstance(
         all_results, dict
     ), f"All_results should be a Dict, and is {type(all_results)}"

@@ -14,7 +14,15 @@ from peft.tuners.lora import LoraLayer
 import os
 from functools import wraps
 
-def instructions_to_chat(sample: dict, input_field: str, output_field: str, context_field: str = None, nested_field: str = None, system_message: str = None) -> dict:
+
+def instructions_to_chat(
+    sample: dict,
+    input_field: str,
+    output_field: str,
+    context_field: str = None,
+    nested_field: str = None,
+    system_message: str = None,
+) -> dict:
     """
     Processes a single sample from any dataset to structure it for chatbot training or instruction-based tasks,
     supporting nested structures and optional fields with a more Pythonic approach.
@@ -40,7 +48,10 @@ def instructions_to_chat(sample: dict, input_field: str, output_field: str, cont
         A modified dictionary with a 'messages' key containing ordered messages,
         each annotated with its role in the conversation.
     """
-    system_msg = system_message or "You are an assistant that solves user's instructions. Use additional context if provided to complete the instruction."
+    system_msg = (
+        system_message
+        or "You are an assistant that solves user's instructions. Use additional context if provided to complete the instruction."
+    )
     chat = [{"role": "system", "content": system_msg}]
 
     def extract_data(field, nested=None):
@@ -54,15 +65,19 @@ def instructions_to_chat(sample: dict, input_field: str, output_field: str, cont
 
     if input_content:
         chat.append({"role": "input", "content": input_content})
-    
-    chat.extend([
-        {"role": "user", "content": input_content},  # Assuming the input_field holds the user's instruction
-        {"role": "assistant", "content": output_content}
-    ])
+
+    chat.extend(
+        [
+            {
+                "role": "user",
+                "content": input_content,
+            },  # Assuming the input_field holds the user's instruction
+            {"role": "assistant", "content": output_content},
+        ]
+    )
 
     sample["messages"] = chat
     return sample
-
 
 
 def neftune_forward(self, input: torch.Tensor):
@@ -465,6 +480,7 @@ class SavePeftModelCallback(TrainerCallback):
         -------
         None
         """
+
         def touch(fname, times=None):
             with open(fname, "a"):
                 os.utime(fname, times)

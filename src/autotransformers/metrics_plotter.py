@@ -61,9 +61,9 @@ class ResultsPlotter:
             df_metrics = df_metrics._append(
                 df_metrics.groupby(by="model_name", as_index=False).aggregate("mean")
             )
-            df_metrics.loc[df_metrics["dataset_name"].isna(), "dataset_name"] = (
-                "AVERAGE"
-            )
+            df_metrics.loc[
+                df_metrics["dataset_name"].isna(), "dataset_name"
+            ] = "AVERAGE"
         plot = self._make_plot(df_metrics)
         return plot
 
