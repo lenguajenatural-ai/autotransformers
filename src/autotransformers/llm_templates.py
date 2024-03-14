@@ -71,7 +71,7 @@ def instructions_to_chat(
             {
                 "role": "user",
                 "content": input_content,
-            },  # Assuming the input_field holds the user's instruction
+            },
             {"role": "assistant", "content": output_content},
         ]
     )
