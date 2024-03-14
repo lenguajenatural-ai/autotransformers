@@ -4,7 +4,7 @@
 
 `autotransformers` is useful for training multiple transformer-like models for a bunch of datasets in one go, without writing much code or using too much time (the machine does the effort, not you). It is highly integrated with HuggingFace libraries: Transformers, PEFT, TRL, Datasets and Evaluate.
 
-Please check the [online documentation](https://autotransformers.readthedocs.io/en/latest/index.html) for a more complete overview of the library.
+Please check the [online documentation](https://lenguajenatural-ai.github.io/autotransformers/autotransformers.html) for a more complete overview of the library.
 
 The main functionality of `autotransformers` is depicted in the following figure, where the dashed lines represent fully customizable modules:
 
