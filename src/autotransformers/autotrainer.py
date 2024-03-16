@@ -129,7 +129,7 @@ class AutoTrainer:
                     ):
                         continue
                 transformers_manager = HFTransformersManager(
-                    model_config, dataset_config
+                    model_config, dataset_config, use_auth_token=self.use_auth_token
                 )
                 datasets_manager = HFDatasetsManager(dataset_config, model_config)
 
@@ -226,7 +226,7 @@ class AutoTrainer:
                 if len(model_config.dropout_vals) == 0:
                     model_config.dropout_vals = [0.0]
                 transformers_manager = HFTransformersManager(
-                    model_config, dataset_config
+                    model_config, dataset_config, use_auth_token=self.use_auth_token
                 )
                 datasets_manager = HFDatasetsManager(dataset_config, model_config)
                 self.tokenizer = transformers_manager.load_tokenizer()
