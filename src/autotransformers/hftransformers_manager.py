@@ -284,7 +284,7 @@ class HFTransformersManager:
             ),
             "callbacks": self.dataset_config.callbacks,
         }
-        if self.dataset_config.taks == "alignment":
+        if self.dataset_config.task == "alignment":
             trainer_params["model"] = model_init()
             if not self.model_config.peft_config:
                 trainer_params["ref_model"] = model_init()
