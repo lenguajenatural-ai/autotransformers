@@ -114,10 +114,7 @@ class HFDatasetsManager:
             tag2id = {t: i for i, t in enumerate(sorted(tags))}
             dataset = self._general_label_mapper(tag2id, dataset)
         dataset = self._augment_dataset(dataset)
-        if self.model_config.custom_tokenization_func is None and (
-            self.dataset_config.task not in tok_func_map
-            or not tok_func_map[self.dataset_config.task]
-        ):
+        if self.dataset_config.task in tok_func_map and tok_func_map[self.dataset_config.task]:
             dataset = _tokenize_dataset(
                 tokenizer, tok_func_map, dataset, self.dataset_config, self.model_config
             )
