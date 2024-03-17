@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 from transformers import (
     TrainerCallback,
     PreTrainedModel,
@@ -13,7 +13,7 @@ import torch
 from peft.tuners.lora import LoraLayer
 import os
 from functools import wraps
-
+import random
 
 def instructions_to_chat(
     sample: dict,
@@ -21,7 +21,7 @@ def instructions_to_chat(
     output_field: str,
     context_field: str = None,
     nested_field: str = None,
-    system_message: str = None,
+    system_message: Optional[str|list] = None,
 ) -> dict:
     """
     Processes a single sample from any dataset to structure it for chatbot training or instruction-based tasks,
@@ -39,8 +39,8 @@ def instructions_to_chat(
         The key for additional context, if any.
     nested_field : str, optional
         The key for a nested field within the sample, if the data structure is nested.
-    system_message : str, optional
-        A system message to initialize the conversation. If None, a default message is used.
+    system_message : str or list, optional
+        A system message to initialize the conversation. If None, a default message is used. If a list is provided, a random system message is selected from the list for each element.
 
     Returns
     -------
@@ -48,10 +48,13 @@ def instructions_to_chat(
         A modified dictionary with a 'messages' key containing ordered messages,
         each annotated with its role in the conversation.
     """
-    system_msg = (
-        system_message
-        or "You are an assistant that solves user's instructions. Use additional context if provided to complete the instruction."
-    )
+    if not isinstance(system_message, list):
+        system_msg = (
+            system_message
+            or "You are an assistant that solves user's instructions. Use additional context if provided to complete the instruction."
+        )
+    else:
+        system_msg = random.choice(system_message)
     chat = [{"role": "system", "content": system_msg}]
 
     def extract_data(field, nested=None):
