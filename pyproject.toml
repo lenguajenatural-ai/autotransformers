@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "autotransformers"
-version = "0.0.5"
+version = "0.0.6"
 description = "a Python package for automatic training and benchmarking of Language Models."
 authors = [
     "LenguajeNatural.AI <avaca@lenguajenatural.ai>"
