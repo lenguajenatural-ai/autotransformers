@@ -1,6 +1,6 @@
 # AUTOTRANSFORMERS: A library for automatic training and comparison of Language Models.
 
-![autotransformers logo](./imgs/LenguajeNaturalAI_fondoblanco.jpg)
+![autotransformers logo](./imgs/portada.png)
 
 `autotransformers` is useful for training multiple transformer-like models for a bunch of datasets in one go, without writing much code or using too much time (the machine does the effort, not you). It is highly integrated with HuggingFace libraries: Transformers, PEFT, TRL, Datasets and Evaluate.
 
