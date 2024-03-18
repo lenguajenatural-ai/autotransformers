@@ -15,6 +15,18 @@ import os
 from functools import wraps
 import random
 
+CHAT_NATURAL_TEMPLATE = """{% for message in messages %}
+    {% if message['role'] == 'user' %}
+        {{'<user> ' + message['content'].strip() + ' </user>' }}
+    {% elif message['role'] == 'system' %}
+        {{'<system>\\n' + message['content'].strip() + '\\n</system>\\n\\n' }}
+    {% elif message['role'] == 'assistant' %}
+        {{ message['content'].strip() + ' </assistant>' + eos_token }}
+    {% elif message['role'] == 'input' %}
+        {{'<input> ' + message['content'] + ' </input>' }}
+    {% endif %}
+{% endfor %}"""
+
 def instructions_to_chat(
     sample: dict,
     input_field: str,
