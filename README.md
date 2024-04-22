@@ -404,3 +404,14 @@ autotrainer()
 ```
 
 In this way, we are using the pipeline to internally augment data before training, therefore we will increment the amount of training data, without modifying the validation and test subsets.
+
+## Citation
+
+```
+@misc{vaca2024autotransformers,
+    author = {Alejandro Vaca Serrano},
+    title = {AutoTransformers: A Library for Automatic Training and Benchmarking of Transformer Models},
+    year = {2024},
+    howpublished = {\url{https://github.com/lenguajenatural-ai/autotransformers}},
+}
+```
