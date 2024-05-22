@@ -71,8 +71,8 @@ def compute_metrics_multilabel(
 
     for thres in thresholds:
         preds = preds >= thres
-        preds = preds.astype(np.int)
-        labels = labels.astype(np.int)
+        preds = preds.astype(int)
+        labels = labels.astype(int)
         class_report = classification_report(
             labels,
             preds,
