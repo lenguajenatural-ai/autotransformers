@@ -5,6 +5,8 @@ import itertools
 from typing import List
 import torch
 import evaluate
+from joblib import Parallel, delayed
+
 
 nltk.download("punkt")
 
@@ -41,12 +43,69 @@ def compute_metrics_classification(
     metrics = class_report["macro avg"]
     return metrics
 
-
-def compute_metrics_multilabel(
-    pred, tokenizer=None, id2tag=None, additional_metrics=None
-):
+def compute_metrics_for_threshold(preds, labels, thres):
     """
-    Compute the metrics for a multilabel task.
+    Compute classification metrics for a given threshold.
+    """
+    preds_bin = preds >= thres
+    preds_bin = preds_bin.astype(int)
+    labels = labels.astype(int)
+    
+    class_report = classification_report(labels, preds_bin, output_dict=True)
+    metrics = class_report["macro avg"]
+    f1 = metrics["f1-score"]
+    
+    return thres, metrics, f1
+
+
+# def compute_metrics_multilabel(
+#     pred, tokenizer=None, id2tag=None, additional_metrics=None
+# ):
+#     """
+#     Compute the metrics for a multilabel task.
+# 
+#     Parameters
+#     ----------
+#     pred: transformers.EvalPrediction
+#         Prediction as output by transformers.Trainer
+#     tokenizer: transformers.Tokenizer
+#         Tokenizer from huggingface.
+#     id2tag: Dict
+#         Dictionary mapping label ids to label names.
+#     additional_metrics: List
+#         List with additional metrics to compute.
+# 
+#     Returns
+#     -------
+#     best_metrics: Dict
+#         Dictionary with best metrics, after trying different thresholds.
+#     """
+#     preds, labels = pred.predictions, pred.label_ids
+#     preds = torch.sigmoid(torch.from_numpy(preds)).numpy()
+#     thresholds = np.arange(0.1, 0.9, 0.1)
+#     best_metrics, best_metric, best_threshold = {}, 0, 0.5
+# 
+#     for thres in thresholds:
+#         preds = preds >= thres
+#         preds = preds.astype(int)
+#         labels = labels.astype(int)
+#         class_report = classification_report(
+#             labels,
+#             preds,
+#             output_dict=True,
+#         )
+#         metrics = class_report["macro avg"]
+#         f1 = metrics["f1-score"]
+#         if f1 > best_metric:
+#             best_metrics = metrics
+#             best_metric = f1
+#             best_threshold = thres
+#     print(f"*** The best threshold is {best_threshold} ***")
+#     return best_metrics
+
+def compute_metrics_multilabel(pred, tokenizer=None, id2tag=None, additional_metrics=None, n_jobs=2):
+    """
+    Compute the best metrics for a multilabel task using parallel processing.
 
     Parameters
     ----------
@@ -58,6 +117,8 @@ def compute_metrics_multilabel(
         Dictionary mapping label ids to label names.
     additional_metrics: List
         List with additional metrics to compute.
+    n_jobs: int
+        Number of parallel jobs (-1 uses all available cores).
 
     Returns
     -------
@@ -66,24 +127,18 @@ def compute_metrics_multilabel(
     """
     preds, labels = pred.predictions, pred.label_ids
     preds = torch.sigmoid(torch.from_numpy(preds)).numpy()
-    thresholds = np.arange(0.1, 0.9, 0.1)
-    best_metrics, best_metric, best_threshold = {}, 0, None
+    
+    # Definir los thresholds a evaluar
+    thresholds = np.arange(0.1, 0.9, 0.05)  # Más granularidad
 
-    for thres in thresholds:
-        preds = preds >= thres
-        preds = preds.astype(int)
-        labels = labels.astype(int)
-        class_report = classification_report(
-            labels,
-            preds,
-            output_dict=True,
-        )
-        metrics = class_report["macro avg"]
-        f1 = metrics["f1-score"]
-        if f1 > best_metric:
-            best_metrics = metrics
-            best_metric = f1
-            best_threshold = thres
+    # Ejecutar en paralelo
+    results = Parallel(n_jobs=n_jobs)(
+        delayed(compute_metrics_for_threshold)(preds, labels, thres) for thres in thresholds
+    )
+
+    # Obtener el mejor threshold basado en el F1-score
+    best_threshold, best_metrics, best_metric = max(results, key=lambda x: x[2])
+
     print(f"*** The best threshold is {best_threshold} ***")
     return best_metrics
 

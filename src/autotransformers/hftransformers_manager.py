@@ -19,7 +19,6 @@ from functools import partial
 from .dataset_config import DatasetConfig
 from .model_config import ModelConfig
 from typing import Dict
-from trl import DPOTrainer
 
 
 class MultilabelTrainer(Trainer):
@@ -55,7 +54,7 @@ map_trainer_cls = {
     "chatbot": Trainer,
     "multilabel": MultilabelTrainer,
     "seq2seq": Seq2SeqTrainer,
-    "alignment": DPOTrainer,
+    # "alignment": DPOTrainer,
 }
 
 map_model_cls = {
@@ -64,7 +63,7 @@ map_model_cls = {
     "qa": AutoModelForQuestionAnswering,
     "seq2seq": AutoModelForSeq2SeqLM,
     "chatbot": AutoModelForCausalLM,
-    "alignment": AutoModelForCausalLM,
+    # "alignment": AutoModelForCausalLM,
 }
 
 
